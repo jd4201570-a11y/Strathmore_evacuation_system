@@ -1,4 +1,4 @@
-const API_ROOT = import.meta.env.VITE_API_ROOT || 'http://localhost:4000'
+const API_ROOT = import.meta.env.VITE_API_ROOT || ''
 
 async function makeRequest(endpoint, options = {}) {
   const sessionId = localStorage.getItem('sessionId')

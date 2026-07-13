@@ -1,8 +1,7 @@
 function normalize(text) {
   return String(text || '')
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, ' ')
-    .trim()
+    .replace(/[^a-z0-9]+/g, '')
 }
 
 function findNodeMatch(nodes, query) {

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
 /* ── Strathmore University Brand Tokens ─────────────── */
 :root {
   --su-maroon:        #6B1A1A;
@@ -19,8 +21,6 @@
   --su-radius-md:     14px;
   --su-radius-lg:     20px;
 }
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 *, *::before, *::after { box-sizing: border-box; }
 

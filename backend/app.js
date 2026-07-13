@@ -2,17 +2,19 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const helmet = require('helmet');
+const path = require('path');
 
 dotenv.config();
 
 // Initialize PostgreSQL database (src copy)
 const { initializeDatabase } = require('./src/shared/utils/database');
 
-// Initialize database before creating app
-initializeDatabase().catch(err => {
-  console.error('Failed to initialize database:', err);
-  process.exit(1);
-});
+// Initialize database schema only outside production (migrations run separately on Vercel)
+if (process.env.NODE_ENV !== 'production') {
+  initializeDatabase().catch(err => {
+    console.error('Failed to initialize database:', err);
+  });
+}
 
 const app = express();
 
@@ -30,8 +32,8 @@ app.use(helmet({
 app.use(express.json());
 
 // Serve static files (maps and floor plans)
-app.use('/maps', express.static('./public'));
-app.use('/floor-plans', express.static('./public'));
+app.use('/maps', express.static(path.join(__dirname, 'public')));
+app.use('/floor-plans', express.static(path.join(__dirname, 'public')));
 
 // apply rate limiter to all API routes
 const { apiLimiter } = require('./src/middleware/rateLimiter');
@@ -41,11 +43,19 @@ app.get('/api/ping', (req, res) => {
   res.json({ status: 'ok', time: new Date().toISOString() });
 });
 
+function tryMountRoute(routePath, modulePath) {
+  try {
+    app.use(routePath, require(modulePath));
+  } catch (err) {
+    console.warn(`Skipping ${routePath}: ${err.message}`);
+  }
+}
+
 // Mount routes
-app.use('/api/auth', require('./src/routes/auth'));
-app.use('/api/navigation', require('./src/routes/navigation'));
-app.use('/api/locations', require('./src/routes/locations'));
-app.use('/api/maps', require('./src/routes/maps'));
-app.use('/api/floor-plans', require('./src/modules/floorPlans/routes'));
+tryMountRoute('/api/auth', './src/routes/auth');
+tryMountRoute('/api/navigation', './src/routes/navigation');
+tryMountRoute('/api/locations', './src/routes/locations');
+tryMountRoute('/api/maps', './src/routes/maps');
+tryMountRoute('/api/floor-plans', './src/modules/floorPlans/routes');
 
 module.exports = app;

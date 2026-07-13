@@ -25,6 +25,6 @@ export const mapsService = {
 
   // Get map image URL
   getMapImageUrl: (imagePath) => {
-    return `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000'}${imagePath}`;
+    return `${import.meta.env.VITE_API_BASE_URL || ''}${imagePath}`;
   }
 };

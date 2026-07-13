@@ -11,6 +11,14 @@ export default defineConfig({
         target: 'http://localhost:4000',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '/api')
+      },
+      '/maps': {
+        target: 'http://localhost:4000',
+        changeOrigin: true
+      },
+      '/floor-plans': {
+        target: 'http://localhost:4000',
+        changeOrigin: true
       }
     }
   },

@@ -11,4 +11,4 @@ async function verifySession(req, res, next) {
   next()
 }
 
-module.exports = { verifySession, verifyFirebaseToken: verifySession }
+module.exports = { verifySession }

@@ -4,7 +4,7 @@ import { getNodesForFloor, getEdgesForFloor, getRoute } from '../services/api'
 import { floorPlansService } from '../services/floorPlansService'
 
 const BUILDING_NAMES = {
-  'building-1': 'Strathmore University — Main Building',
+  'building-1': 'Strathmore University — Central Building',
 }
 
 const SELECTABLE_TYPES = ['entrance', 'stairs', 'elevator', 'emergency_exit', 'room', 'corridor']
