@@ -23,6 +23,12 @@ export default function AdminDashboard({ user, onLogout }) {
   const [edgeDrawMode, setEdgeDrawMode] = useState(false)
   const [selectedNodesForEdge, setSelectedNodesForEdge] = useState([])
 
+  const [uploadForm, setUploadForm] = useState({ floorNumber: '', floorName: '', file: null })
+  const [uploadPreview, setUploadPreview] = useState(null)
+  const [uploadBusy, setUploadBusy] = useState(false)
+  const [uploadError, setUploadError] = useState('')
+  const [uploadSuccess, setUploadSuccess] = useState('')
+
   useEffect(() => {
     const loadFloors = async () => {
       const data = await floorPlansService.getFloorsByBuilding(selectedBuildingId)
@@ -239,6 +245,45 @@ export default function AdminDashboard({ user, onLogout }) {
     setSelectedNodesForEdge([])
   }
 
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0] || null
+    setUploadForm(prev => ({ ...prev, file }))
+    if (file) {
+      const reader = new FileReader()
+      reader.onload = (ev) => setUploadPreview(ev.target.result)
+      reader.readAsDataURL(file)
+    } else {
+      setUploadPreview(null)
+    }
+  }
+
+  const handleUploadSubmit = async (e) => {
+    e.preventDefault()
+    setUploadError('')
+    setUploadSuccess('')
+    if (!uploadForm.file) return setUploadError('Please select an image file.')
+    if (!uploadForm.floorNumber) return setUploadError('Floor number is required.')
+    setUploadBusy(true)
+    try {
+      await floorPlansService.uploadFloorPlan(
+        uploadForm.file,
+        selectedBuildingId,
+        Number(uploadForm.floorNumber),
+        uploadForm.floorName || `Floor ${uploadForm.floorNumber}`
+      )
+      setUploadSuccess('Floor plan uploaded successfully!')
+      setUploadForm({ floorNumber: '', floorName: '', file: null })
+      setUploadPreview(null)
+      // Reload floor list
+      const data = await floorPlansService.getFloorsByBuilding(selectedBuildingId)
+      setFloors(data || [])
+    } catch (err) {
+      setUploadError(err?.message || 'Upload failed.')
+    } finally {
+      setUploadBusy(false)
+    }
+  }
+
   return (
     <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #f4f7f9 0%, #e9eef3 100%)' }}>
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '18px 24px', background: '#0f5132', color: 'white' }}>
@@ -349,11 +394,68 @@ export default function AdminDashboard({ user, onLogout }) {
               <div style={{ display: 'grid', gap: 8 }}>
                 {floors.map(floor => (
                   <button key={floor.floor_id} onClick={() => setSelectedFloorId(floor.floor_id)} style={{ textAlign: 'left', padding: 12, borderRadius: 10, border: selectedFloorId === floor.floor_id ? '2px solid #0f5132' : '1px solid #d0d5dd', background: 'white', cursor: 'pointer' }}>
-                    {floor.floor_name} - {floor.map_image_url || 'No image'}
+                    {floor.floor_name} - {floor.map_image_url ? '✓ Image' : 'No image'}
                   </button>
                 ))}
               </div>
             </div>
+
+            {/* ── Upload Floor Plan ─────────────────────────────── */}
+            <form onSubmit={handleUploadSubmit} style={{ background: 'white', borderRadius: 16, padding: 16, boxShadow: '0 8px 24px rgba(0,0,0,0.08)' }}>
+              <h3 style={{ marginTop: 0 }}>Upload Floor Plan</h3>
+
+              {/* Drop zone / file picker */}
+              <label style={{
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                border: '2px dashed #d0d5dd', borderRadius: 12, padding: '16px 8px',
+                cursor: 'pointer', marginBottom: 12, background: '#f9fafb',
+                transition: 'border-color 0.2s',
+              }}>
+                {uploadPreview
+                  ? <img src={uploadPreview} alt='preview' style={{ maxHeight: 120, maxWidth: '100%', borderRadius: 8, marginBottom: 8, objectFit: 'contain' }} />
+                  : <span style={{ fontSize: 32, marginBottom: 8 }}>🗺️</span>
+                }
+                <span style={{ fontSize: 13, color: '#667085' }}>
+                  {uploadForm.file ? uploadForm.file.name : 'Click to choose an image (PNG / JPG)'}
+                </span>
+                <input type='file' accept='image/*' onChange={handleFileChange} style={{ display: 'none' }} />
+              </label>
+
+              <input
+                type='number'
+                placeholder='Floor number (e.g. 0 for Ground)'
+                value={uploadForm.floorNumber}
+                onChange={(e) => setUploadForm(prev => ({ ...prev, floorNumber: e.target.value }))}
+                min={0}
+                style={{ width: '100%', padding: 10, marginBottom: 8, borderRadius: 8, border: '1px solid #d0d5dd', boxSizing: 'border-box' }}
+              />
+              <input
+                type='text'
+                placeholder='Floor name (e.g. Ground Floor)'
+                value={uploadForm.floorName}
+                onChange={(e) => setUploadForm(prev => ({ ...prev, floorName: e.target.value }))}
+                style={{ width: '100%', padding: 10, marginBottom: 12, borderRadius: 8, border: '1px solid #d0d5dd', boxSizing: 'border-box' }}
+              />
+
+              {uploadError && (
+                <div style={{ color: '#b42318', background: '#fef3f2', border: '1px solid #fecdca', borderRadius: 8, padding: '8px 12px', marginBottom: 8, fontSize: 13 }}>
+                  {uploadError}
+                </div>
+              )}
+              {uploadSuccess && (
+                <div style={{ color: '#027a48', background: '#ecfdf3', border: '1px solid #a9efc5', borderRadius: 8, padding: '8px 12px', marginBottom: 8, fontSize: 13 }}>
+                  {uploadSuccess}
+                </div>
+              )}
+
+              <button
+                type='submit'
+                disabled={uploadBusy}
+                style={{ width: '100%', padding: 12, borderRadius: 10, border: 'none', background: uploadBusy ? '#6c9e82' : '#0f5132', color: 'white', fontWeight: 600, cursor: uploadBusy ? 'not-allowed' : 'pointer', fontSize: 14 }}
+              >
+                {uploadBusy ? 'Uploading…' : 'Upload Floor Plan'}
+              </button>
+            </form>
           </div>
         </section>
 
