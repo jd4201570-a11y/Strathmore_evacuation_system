@@ -1,0 +1,178 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Users table
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  password  String     // Will be hashed with bcrypt
+  name      String
+  role      UserRole   @default(VISITOR)
+  isActive  Boolean    @default(true)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  // Relations
+  sessions         Session[]
+  navigationHistories NavigationHistory[]
+  activityLogs     ActivityLog[]
+
+  @@map("users")
+}
+
+// Sessions table (for JWT refresh tokens if needed)
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique // JWT token
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+// Floor Plans
+model FloorPlan {
+  id           String   @id @default(cuid())
+  buildingId   String
+  floorNumber  Int
+  floorName    String
+  mapImageUrl  String?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  navigationNodes NavigationNode[]
+  rooms           Room[]
+
+  @@map("floor_plans")
+}
+
+// Rooms/Locations
+model Location {
+  id            String     @id @default(cuid())
+  floorId       String
+  roomName      String
+  roomType      RoomType
+  description   String?
+  xCoordinate   Float
+  yCoordinate   Float
+  isActive      Boolean    @default(true)
+  visibleTo     UserRole[] @default([VISITOR, STUDENT, LECTURER])
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  // Relations
+  navigationHistory NavigationHistory[]
+
+  @@map("locations")
+}
+
+// Navigation Node Types
+enum NavigationNodeType {
+  REGULAR
+  ELEVATOR
+  STAIRS
+  ENTRANCE
+  EMERGENCY_EXIT
+}
+
+// Navigation Nodes
+model NavigationNode {
+  id          String                @id @default(cuid())
+  floorId     String
+  name        String
+  nodeType    NavigationNodeType    @default(REGULAR)
+  xCoordinate Float
+  yCoordinate Float
+  isActive    Boolean               @default(true)
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+
+  floorPlan FloorPlan @relation(fields: [floorId], references: [id], onDelete: Cascade)
+
+  // Relations
+  outgoingConnections RouteConnection[] @relation("from")
+  incomingConnections RouteConnection[] @relation("to")
+
+  @@map("navigation_nodes")
+}
+
+// Route Connections (Edges between nodes)
+model RouteConnection {
+  id          String   @id @default(cuid())
+  fromNodeId  String
+  toNodeId    String
+  distance    Float    // Weight for pathfinding
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  fromNode NavigationNode @relation("from", fields: [fromNodeId], references: [id], onDelete: Cascade)
+  toNode   NavigationNode @relation("to", fields: [toNodeId], references: [id], onDelete: Cascade)
+
+  @@map("route_connections")
+}
+
+// Navigation History (for analytics)
+model NavigationHistory {
+  id              String   @id @default(cuid())
+  userId          String
+  startLocationId String
+  endLocationId   String
+  distance        Float
+  duration        Int      // in seconds
+  timestamp       DateTime @default(now())
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  startLocation Location @relation("startLocation", fields: [startLocationId], references: [id], onDelete: SetNull)
+  endLocation   Location @relation("endLocation", fields: [endLocationId], references: [id], onDelete: SetNull)
+
+  @@map("navigation_requests")
+}
+
+// Activity Logs
+model ActivityLog {
+  id        String   @id @default(cuid())
+  userId    String
+  action    String
+  resource  String   // What was accessed (e.g., "location", "floor", "navigation")
+  details   Json?    // Additional context
+  timestamp DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("activity_logs")
+}
+
+// Enums
+enum UserRole {
+  VISITOR
+  STUDENT
+  LECTURER
+  ADMIN
+}
+
+enum RoomType {
+  CLASSROOM
+  OFFICE
+  RESTROOM
+  CAFETERIA
+  LAB
+  LIBRARY
+  CORRIDOR
+  OTHER
+}

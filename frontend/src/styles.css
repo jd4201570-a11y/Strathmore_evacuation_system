@@ -1,0 +1,386 @@
+/* ── Strathmore University Brand Tokens ─────────────── */
+:root {
+  --su-maroon:        #6B1A1A;
+  --su-maroon-dark:   #4A0D0D;
+  --su-maroon-light:  #8B2E2E;
+  --su-gold:          #C9A62F;
+  --su-gold-light:    #E8C55A;
+  --su-gold-pale:     #F9F0D6;
+  --su-cream:         #FBF7F2;
+  --su-white:         #FFFFFF;
+  --su-dark:          #1C1410;
+  --su-text:          #2C1810;
+  --su-text-muted:    #6B5744;
+  --su-border:        #E4D8CC;
+  --su-shadow-sm:     0 1px 4px rgba(107,26,26,0.10);
+  --su-shadow-md:     0 4px 20px rgba(107,26,26,0.12);
+  --su-shadow-lg:     0 8px 40px rgba(107,26,26,0.16);
+  --su-radius-sm:     8px;
+  --su-radius-md:     14px;
+  --su-radius-lg:     20px;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  margin: 0;
+  background: var(--su-cream);
+  color: var(--su-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+.app-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: var(--su-cream);
+  text-align: center;
+  color: var(--su-maroon);
+  font-weight: 600;
+}
+
+/* ── Emergency Evacuation Interface ─────────────────── */
+
+.evacuation-app {
+  min-height: 100vh;
+  background: linear-gradient(160deg, #FBF7F2 0%, #F5EDE3 50%, #EFE5D8 100%);
+}
+
+.evacuation-header {
+  text-align: center;
+  padding: 32px 24px 24px;
+  background: linear-gradient(135deg, var(--su-maroon-dark) 0%, var(--su-maroon) 60%, var(--su-maroon-light) 100%);
+  border-bottom: 4px solid var(--su-gold);
+  box-shadow: var(--su-shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.evacuation-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23C9A62F' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+.evacuation-logo {
+  height: 80px;
+  width: auto;
+  margin-bottom: 16px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
+  position: relative;
+}
+
+.evacuation-title {
+  margin: 0 0 8px;
+  font-size: clamp(1.25rem, 4vw, 1.85rem);
+  font-weight: 800;
+  color: #FFFFFF;
+  letter-spacing: -0.02em;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  position: relative;
+}
+
+.evacuation-building {
+  margin: 0;
+  font-size: clamp(0.9rem, 2.5vw, 1.05rem);
+  color: var(--su-gold-light);
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  position: relative;
+}
+
+.evacuation-main {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 24px 20px 40px;
+}
+
+/* ── Floor switcher ─────────────────────────────────── */
+.evacuation-floor-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 14px 18px;
+  background: var(--su-white);
+  border: 1px solid var(--su-border);
+  border-radius: var(--su-radius-md);
+  box-shadow: var(--su-shadow-sm);
+}
+
+.evacuation-floor-label {
+  font-weight: 700;
+  color: var(--su-maroon);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.evacuation-floor-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.evacuation-floor-btn {
+  padding: 7px 18px;
+  border-radius: 999px;
+  border: 1.5px solid var(--su-border);
+  background: var(--su-white);
+  color: var(--su-text-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  font-family: inherit;
+}
+
+.evacuation-floor-btn:hover {
+  border-color: var(--su-maroon);
+  color: var(--su-maroon);
+  background: var(--su-gold-pale);
+}
+
+.evacuation-floor-btn.active {
+  background: var(--su-maroon);
+  color: var(--su-white);
+  border-color: var(--su-maroon);
+  font-weight: 700;
+  box-shadow: 0 2px 10px rgba(107,26,26,0.25);
+}
+
+/* ── Controls card ──────────────────────────────────── */
+.evacuation-controls {
+  background: var(--su-white);
+  border: 1px solid var(--su-border);
+  border-radius: var(--su-radius-lg);
+  padding: 28px 24px;
+  margin-bottom: 20px;
+  box-shadow: var(--su-shadow-md);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.evacuation-controls::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--su-maroon) 0%, var(--su-gold) 100%);
+}
+
+.evacuation-field label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--su-maroon);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.evacuation-field select {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: var(--su-radius-sm);
+  border: 1.5px solid var(--su-border);
+  font-size: 1rem;
+  background: var(--su-cream);
+  color: var(--su-text);
+  font-family: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  appearance: auto;
+}
+
+.evacuation-field select:focus {
+  outline: none;
+  border-color: var(--su-maroon);
+  box-shadow: 0 0 0 3px rgba(107, 26, 26, 0.12);
+  background: var(--su-white);
+}
+
+.evacuation-find-btn {
+  width: 100%;
+  padding: 18px 24px;
+  background: linear-gradient(135deg, var(--su-maroon) 0%, var(--su-maroon-light) 100%);
+  color: var(--su-white);
+  border: none;
+  border-radius: var(--su-radius-sm);
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  box-shadow: 0 4px 18px rgba(107, 26, 26, 0.35);
+  margin-top: 4px;
+  font-family: inherit;
+  text-transform: uppercase;
+}
+
+.evacuation-find-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--su-maroon-dark) 0%, var(--su-maroon) 100%);
+  box-shadow: 0 6px 24px rgba(107, 26, 26, 0.45);
+  transform: translateY(-1px);
+}
+
+.evacuation-find-btn:active:not(:disabled) {
+  transform: translateY(0) scale(0.99);
+  box-shadow: 0 2px 10px rgba(107, 26, 26, 0.3);
+}
+
+.evacuation-find-btn:disabled {
+  background: #C4B5A8;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.evacuation-clear-btn {
+  width: 100%;
+  padding: 12px 20px;
+  background: transparent;
+  color: var(--su-maroon);
+  border: 2px solid var(--su-maroon);
+  border-radius: var(--su-radius-sm);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+
+.evacuation-clear-btn:hover {
+  background: var(--su-gold-pale);
+  border-color: var(--su-maroon-dark);
+}
+
+/* ── Alert banners ───────────────────────────────────── */
+.evacuation-alert {
+  border-radius: var(--su-radius-sm);
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  box-shadow: var(--su-shadow-sm);
+}
+
+.evacuation-alert--error {
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  border-left: 4px solid var(--su-maroon);
+  color: var(--su-maroon-dark);
+}
+
+.evacuation-alert--success {
+  background: var(--su-gold-pale);
+  border: 1px solid var(--su-gold);
+  border-left: 4px solid var(--su-gold);
+  color: var(--su-maroon-dark);
+  font-weight: 500;
+}
+
+/* ── Map section ─────────────────────────────────────── */
+.evacuation-map-section {
+  border: 1px solid var(--su-border);
+  border-radius: var(--su-radius-lg);
+  overflow: hidden;
+  background: var(--su-white);
+  box-shadow: var(--su-shadow-md);
+  position: relative;
+}
+
+.evacuation-map-section::before {
+  content: 'Floor Map';
+  position: absolute;
+  top: 14px;
+  left: 18px;
+  z-index: 500;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--su-maroon);
+  background: rgba(251,247,242,0.92);
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--su-border);
+  pointer-events: none;
+}
+
+.evacuation-map-empty {
+  padding: 56px 24px;
+  text-align: center;
+  color: var(--su-text-muted);
+}
+
+.evacuation-map-empty-icon {
+  font-size: 3.5rem;
+  margin-bottom: 16px;
+  opacity: 0.6;
+}
+
+.evacuation-map-empty-sub {
+  font-size: 0.9rem;
+  margin-top: 8px;
+  opacity: 0.8;
+}
+
+/* ── Footer ──────────────────────────────────────────── */
+.evacuation-footer {
+  margin-top: 28px;
+  text-align: center;
+  padding: 20px;
+  color: var(--su-text-muted);
+  font-size: 0.82rem;
+  border-top: 1px solid var(--su-border);
+  background: rgba(255,255,255,0.5);
+}
+
+.evacuation-footer p { margin: 0; }
+
+/* ── Map marker labels ───────────────────────────────── */
+.room-label {
+  background: rgba(255, 255, 255, 0.97) !important;
+  border: 1px solid var(--su-border) !important;
+  border-radius: 6px !important;
+  padding: 3px 8px !important;
+  font-size: 11px !important;
+  color: var(--su-text) !important;
+  font-weight: 600 !important;
+  box-shadow: 0 2px 8px rgba(107,26,26,0.15) !important;
+  white-space: nowrap;
+  pointer-events: none;
+  font-family: 'Inter', system-ui, sans-serif !important;
+}
+.room-label::before { display: none !important; }
+
+.node-label {
+  background: rgba(44, 24, 16, 0.88) !important;
+  border: none !important;
+  border-radius: 4px !important;
+  padding: 2px 6px !important;
+  font-size: 11px !important;
+  color: #fff !important;
+  box-shadow: none !important;
+  pointer-events: none;
+  font-family: 'Inter', system-ui, sans-serif !important;
+}
+.node-label::before { display: none !important; }

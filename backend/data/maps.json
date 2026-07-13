@@ -1,0 +1,24 @@
+{
+  "floors": [
+    {
+      "id": 1,
+      "name": "Ground Floor",
+      "level": 0,
+      "imageUrl": "/maps/ground-floor.png",
+      "description": "Ground floor evacuation plan",
+      "width": 1024,
+      "height": 768,
+      "scale": 1
+    },
+    {
+      "id": 2,
+      "name": "1st Floor",
+      "level": 1,
+      "imageUrl": "/maps/first-floor.png",
+      "description": "First floor evacuation plan",
+      "width": 1024,
+      "height": 768,
+      "scale": 1
+    }
+  ]
+}

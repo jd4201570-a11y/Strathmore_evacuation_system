@@ -1,0 +1,39 @@
+node_modules/
+/.env
+/backend/node_modules
+/frontend/node_modules
+dist/
+DIST/
+build/
+coverage/
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+
+# Backend credentials / local config
+backend/.env
+backend/serviceAccountKey.json
+
+# Frontend local env
+frontend/.env.local
+
+# Documentation files — not included in repo
+API_TEST_EXAMPLES.md
+CHAPTER_5_IMPLEMENTATION_AND_TESTING.md
+DEMO_AND_TESTING_GUIDE.md
+DEVELOPMENT_PROGRESS.md
+DOCUMENTATION_INDEX.md
+EMERGENCY_EXIT_NODES_GUIDE.md
+FEATURE_1_DOCUMENTATION.md
+FEATURE_2_DOCUMENTATION.md
+FEATURE_2_QUICK_REFERENCE.md
+FIREBASE_SETUP_COMPLETE.md
+GETTING_STARTED.md
+MAPS_SETUP.md
+NODE_INPUT_VALIDATION_CHECKLIST.md
+POSTGRES_SETUP.md
+QUICK_START.md
+QUICKSTART.md
+SARIT_ANALYSIS_AND_ROADMAP.md
+SETUP_GUIDE.md
