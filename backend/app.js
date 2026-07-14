@@ -43,19 +43,17 @@ app.get('/api/ping', (req, res) => {
   res.json({ status: 'ok', time: new Date().toISOString() });
 });
 
-function tryMountRoute(routePath, modulePath) {
-  try {
-    app.use(routePath, require(modulePath));
-  } catch (err) {
-    console.warn(`Skipping ${routePath}: ${err.message}`);
-  }
-}
+// Mount routes with static imports so serverless bundlers include all modules.
+const authRoutes = require('./src/routes/auth');
+const navigationRoutes = require('./src/routes/navigation');
+const locationsRoutes = require('./src/routes/locations');
+const mapsRoutes = require('./src/routes/maps');
+const floorPlansRoutes = require('./src/modules/floorPlans/routes');
 
-// Mount routes
-tryMountRoute('/api/auth', './src/routes/auth');
-tryMountRoute('/api/navigation', './src/routes/navigation');
-tryMountRoute('/api/locations', './src/routes/locations');
-tryMountRoute('/api/maps', './src/routes/maps');
-tryMountRoute('/api/floor-plans', './src/modules/floorPlans/routes');
+app.use('/api/auth', authRoutes);
+app.use('/api/navigation', navigationRoutes);
+app.use('/api/locations', locationsRoutes);
+app.use('/api/maps', mapsRoutes);
+app.use('/api/floor-plans', floorPlansRoutes);
 
 module.exports = app;
